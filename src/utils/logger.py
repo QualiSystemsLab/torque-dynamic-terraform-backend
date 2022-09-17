@@ -1,4 +1,5 @@
 import logging
+import sys
 from inspect import getframeinfo, stack
 
 
@@ -9,9 +10,12 @@ class LoggerHelper:
             # logging.basicConfig(filename=log_path,
             #                     format='[%(asctime)s] [%(filename)s] [Line:%(lineno)d]  %(levelname)-5s:  %(message)s',
             #                     level=logging.DEBUG)
-            logging.basicConfig(filename=log_path,
-                                format='[%(asctime)s] [%(levelname)-7s| %(message)s',
-                                level=logging.DEBUG)
+            logging.basicConfig(format='[%(asctime)s] [%(levelname)-7s| %(message)s',
+                                level=logging.DEBUG,
+                                handlers=[
+                                    logging.FileHandler(log_path),      # write to file
+                                    logging.StreamHandler(sys.stdout)   # write to stdout console
+                                ])
         # logging is nice to have but we don't want an error with the log to interfere with the code flow
         except Exception as e:
             print(e)

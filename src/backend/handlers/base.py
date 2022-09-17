@@ -53,7 +53,7 @@ class BaseBackendHandler(ABC):
             filename, file_extension = os.path.splitext(backend[self.tf_state_prop_name])
             unique_key = f"{filename}-{sandbox_id}"
             if file_extension:
-                unique_key = f"{unique_key}.{file_extension}"
+                unique_key = f"{unique_key}{file_extension}"
             LoggerHelper.write_info(f"Created new unique value for tfstate key in {self.backend_type} "
                                     f"backend config: {unique_key}")
             backend[self.tf_state_prop_name] = unique_key

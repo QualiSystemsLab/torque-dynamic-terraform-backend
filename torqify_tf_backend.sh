@@ -31,7 +31,7 @@ echo "===> Installing python dependencies"
 pip3 install -r requirements.txt
 
 # run python package
-echo "===> Running package"
+echo "===> Running torqify_tf_backend package"
 python3 main.py $env_id
 
 echo "===> Done"

@@ -50,7 +50,7 @@ def do_torqify_terraform_backend(sandbox_id: str):
     backend_serializer = BackendSerializer(updated_backend_config, backend_handler, tf_file_backend)
     backend_serializer.create_backend_override_file()
 
-    LoggerHelper.write_info("Successfully finish creating override file for backend files\n\n\n\n")
+    LoggerHelper.write_info("Successfully finish creating override file for backend files\n")
 
 
 def main():

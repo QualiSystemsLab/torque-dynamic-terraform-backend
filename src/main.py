@@ -18,7 +18,7 @@ from utils.file_helpers import FilesHelper
 from utils.logger import LoggerHelper
 
 
-def do_torqify_terraform_backend(sandbox_id: str):
+def torqify_terraform_backend(sandbox_id: str):
     main_tf_dir = consts.TF_MAIN_DIR
     if not os.path.exists(main_tf_dir):
         raise ValueError(f"Path {main_tf_dir} does not exist")
@@ -59,7 +59,7 @@ def main():
 
     LoggerHelper.init_logging(consts.LOG_PATH)
     try:
-        do_torqify_terraform_backend(sandbox_id)
+        torqify_terraform_backend(sandbox_id)
     except Exception as exc:
         # log exception and re-raise original exception
         LoggerHelper.write_error(str(exc))
@@ -68,4 +68,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

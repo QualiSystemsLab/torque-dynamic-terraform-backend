@@ -1,3 +1,4 @@
+import json
 import os
 from abc import ABC, abstractmethod
 from copy import deepcopy
@@ -30,9 +31,9 @@ class BaseBackendHandler(ABC):
 
     def _get_base_template(self) -> str:
         return """terraform {{
-    backend \"{BACKEND_TYPE}\" {{
+\tbackend \"{BACKEND_TYPE}\" {{
 {BACKEND_PROPS}
-    }}
+\t}}
 }}
 """
 
@@ -64,6 +65,9 @@ class BaseBackendHandler(ABC):
         return backend_config_copy
 
     def format_backend_to_hcl(self, backend_config: dict) -> str:
+        if self.backend_type not in backend_config:
+            raise ValueError(f"Expected backend type '{self.backend_type}' but different received different backend "
+                             f"type '{json.dumps(backend_config)}'")
         backend_props = backend_config[self.backend_type]
         if not isinstance(backend_props, dict):
             raise ValueError(
@@ -72,5 +76,3 @@ class BaseBackendHandler(ABC):
         backend_hcl_str = self._get_backend_with_props_template(backend_props)
 
         return backend_hcl_str
-
-

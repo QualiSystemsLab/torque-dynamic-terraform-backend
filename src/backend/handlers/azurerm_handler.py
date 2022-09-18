@@ -1,8 +1,4 @@
-import os
-from copy import deepcopy
-
 from backend.handlers.base import BaseBackendHandler
-from utils.logger import LoggerHelper
 
 
 class AzureRMBackendHandler(BaseBackendHandler):

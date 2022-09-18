@@ -20,7 +20,7 @@ class BackendSerializer:
         backend_config_hcl_string = self._backend_handler.format_backend_to_hcl(self._backend_config)
 
         override_file_path = self._get_override_file_path()
-        with(open(override_file_path, 'w')) as override_tf_file:
+        with (open(override_file_path, 'w')) as override_tf_file:
             override_tf_file.write(backend_config_hcl_string)
 
         LoggerHelper.write_info(f"Override file was created for backend located in file {self._tf_file_info.file_path}")

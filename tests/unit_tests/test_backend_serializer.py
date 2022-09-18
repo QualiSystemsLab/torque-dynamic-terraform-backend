@@ -1,3 +1,4 @@
+import os.path
 from unittest import TestCase
 
 from unittest.mock import Mock, patch, ANY, mock_open
@@ -28,11 +29,13 @@ class TestBackendSerializer(TestCase):
 
     def test_get_override_file_path(self):
         # arrange
-        tf_file_info = Mock(file_name="test.tf", file_dir="c:\\test1\\test2\\")
+        test_file_dir = os.path.join("/", "test1", "test2")
+        tf_file_info = Mock(file_name="test.tf", file_dir=test_file_dir)
         backend_serializer = BackendSerializer(Mock(), Mock(), tf_file_info)
 
         # act
         result = backend_serializer._get_override_file_path()
 
         # assert
-        self.assertEqual(result, "c:\\test1\\test2\\test_override.tf")
+        self.assertEqual(result, os.path.join(test_file_dir, "test_override.tf"))
+1

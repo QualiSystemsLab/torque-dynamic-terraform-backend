@@ -39,7 +39,8 @@ jobs:
 
         - name: Run unit tests
           run: |
-            coverage run --source=src --omit="*/__init__.py" -m unittest discover
+            # run unit tests with "unittest" and run code coverage (omit all __init__.py and utils folder from coverage)
+            coverage run --source=src --omit="*/__init__.py,*/utils/*.py" -m unittest discover
             coverage lcov    # convert coverage.py result to lcov format for Coveralls
             coverage report  # print coverage report
 

@@ -4,17 +4,18 @@ from unittest.mock import Mock, patch, ANY
 
 import consts
 from backend.handlers.s3_handler import S3BackendHandler
-from main import torqify_terraform_backend
+from main import torqify_terraform_backend, main
 from models.file_info import FileInfo
-from utils.logger import LoggerHelper
 
 
-# todo - add tests cases for azurerm and gcs backends
 class TestMain(TestCase):
 
     def setUp(self) -> None:
-        LoggerHelper = Mock()
+        self.patcher = patch('main.LoggerHelper')
+        self.mock_logger = self.patcher.start()
 
+    def tearDown(self) -> None:
+        self.patcher.stop()
 
     @patch("main.BackendSerializer")
     def test_torqify_terraform_backend_with_s3_backend(self, backend_serializer_class_mock):
@@ -64,3 +65,31 @@ class TestMain(TestCase):
         # act
         with self.assertRaisesRegex(ValueError, "Handler not found for backend"):
             torqify_terraform_backend(sandbox_id)
+
+    @patch("main.torqify_terraform_backend")
+    def test_main_entrypoint_with_sandbox_id_arg(self, torqify_terraform_backend_mock):
+        # arrange
+        sandbox_id = Mock()
+        testargs = ["prog", sandbox_id]
+
+        # act
+        with patch("sys.argv", testargs):
+            main()
+
+        # assert
+        self.mock_logger.init_logging.assert_called_once()
+        torqify_terraform_backend_mock.assert_called_once_with(sandbox_id)
+
+    @patch("main.torqify_terraform_backend")
+    def test_main_entrypoint_with_catch_all(self, torqify_terraform_backend_mock):
+        # arrange
+        testargs = ["prog", Mock()]
+        torqify_terraform_backend_mock.side_effect = ValueError("mock err msg")
+
+        # act
+        with self.assertRaises(ValueError):
+            with patch("sys.argv", testargs):
+                main()
+
+        # assert
+        self.mock_logger.write_error.assert_called_once_with("mock err msg")

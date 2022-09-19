@@ -8,6 +8,8 @@ on:
 jobs:
   Release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
         - name: Wait for LintAndTest to succeed
           uses: lewagon/wait-on-check-action@v1.0.0
@@ -34,28 +36,13 @@ jobs:
               exit 1
             fi
 
-        - name: Set up Python
-          uses: actions/setup-python@v2
-          with:
-            python-version: 3.9
-
-        - name: Install dependencies
-          run: |
-            echo "Installing requirements.txt and test_requirements.txt:"
-            cd src
-            if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-            cd ../tests
-            if [ -f test_requirements.txt ]; then pip install -r test_requirements.txt; fi
-            cd ..
-
         - name: Build
           run: |
             chmod +x ./build.sh
             ./build.sh
 
         - name: Create Release and Upload Artifacts
-          uses: softprops/action-gh-release@v1
+          uses: ncipollo/release-action@v1
           with:
-            files: dist/*
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            artifacts: "dist/*"
+            token: ${{ secrets.YOUR_GITHUB_TOKEN }}

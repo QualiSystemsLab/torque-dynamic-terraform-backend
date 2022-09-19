@@ -1,7 +1,5 @@
 import hcl2
 
-from utils.logger import LoggerHelper
-
 
 class Hcl2Parser:
     @staticmethod

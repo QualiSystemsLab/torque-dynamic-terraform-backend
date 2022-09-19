@@ -48,3 +48,11 @@ jobs:
           with:
             github-token: ${{ secrets.GITHUB_TOKEN }}
             path-to-lcov: coverage.lcov
+
+        - name: Test build
+          run: |
+            chmod +x ./build.sh
+            ./build.sh
+            version=$(cat version.txt)
+            if [ ! -f "dist/torqify_tf_backend.$version.sh" ]; then echo "Error: torqify_tf_backend bash script wasn't reated" && exit 1; fi
+            if [ ! -f "torqify_tf_backend.$version.tar.gz" ]; then echo "Error: torqify_tf_backend python tar.gz wasn't created" && exit 1; fi

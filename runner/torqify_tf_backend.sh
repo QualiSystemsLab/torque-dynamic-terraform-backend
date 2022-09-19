@@ -7,10 +7,6 @@ set -e
 version=<VERSION>
 package_url="https://github.com/QualiSystemsLab/torque-dynamic-terraform-backend/releases/download/v$version/torqify_tf_backend.$version.tar.gz"
 
-# get environment id from cli args
-env_id=$1
-echo "===> Environment id: $env_id"
-
 # install curl
 echo "===> Installing curl"
 apt update -y
@@ -32,6 +28,6 @@ pip3 install -r requirements.txt
 
 # run python package
 echo "===> Running torqify_tf_backend package"
-python3 main.py $env_id
+python3 main.py $@
 
 echo "===> Done"

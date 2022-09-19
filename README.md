@@ -1,4 +1,4 @@
-[![CI](https://github.com/github/docs/actions/workflows/main.yml/badge.svg?branch=master)](https://github.com/QualiSystemsLab/torque-dynamic-terraform-backend/actions/workflows/ci.yml)
+[![CI](https://github.com/QualiSystemsLab/torque-dynamic-terraform-backend/actions/workflows/CI.yml/badge.svg)](https://github.com/QualiSystemsLab/torque-dynamic-terraform-backend/actions/workflows/CI.yml)
 [![Coverage Status](https://coveralls.io/repos/github/QualiSystemsLab/torque-dynamic-terraform-backend/badge.svg?branch=master)](https://coveralls.io/github/QualiSystemsLab/torque-dynamic-terraform-backend?branch=master)
 [![Python 3.9](https://img.shields.io/badge/python-3.9-blue.svg)](https://www.python.org/downloads/release/python/)
 

@@ -13,7 +13,7 @@ class TestBackendSerializer(TestCase):
         backend_config = Mock()
         backend_handler = Mock()
         tf_file_info = Mock()
-        backend_serializer = BackendSerializer(backend_config, backend_handler, tf_file_info)
+        backend_serializer = BackendSerializer(backend_config, backend_handler, tf_file_info, Mock())
         override_file_path = Mock()
         backend_serializer._get_override_file_path = Mock(return_value=override_file_path)
         m = mock_open()
@@ -31,11 +31,12 @@ class TestBackendSerializer(TestCase):
         # arrange
         test_file_dir = os.path.join("/", "test1", "test2")
         tf_file_info = Mock(file_name="test.tf", file_dir=test_file_dir)
-        backend_serializer = BackendSerializer(Mock(), Mock(), tf_file_info)
+        sandbox_id = Mock()
+        backend_serializer = BackendSerializer(Mock(), Mock(), tf_file_info, sandbox_id)
 
         # act
         result = backend_serializer._get_override_file_path()
 
         # assert
-        self.assertEqual(result, os.path.join(test_file_dir, "test_override.tf"))
+        self.assertEqual(result, os.path.join(test_file_dir, f"torque_backend_{sandbox_id}_override.tf"))
 1

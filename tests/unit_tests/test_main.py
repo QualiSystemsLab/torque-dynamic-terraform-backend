@@ -31,7 +31,7 @@ class TestMain(TestCase):
         update_backend_config = {'s3': {'bucket': 'my-bucket',
                                         'key': 'path/to/my/key' + "-" + str(sandbox_id),
                                         'region': 'us-west-2'}}
-        backend_serializer_class_mock.assert_called_once_with(update_backend_config, ANY, ANY)
+        backend_serializer_class_mock.assert_called_once_with(update_backend_config, ANY, ANY, sandbox_id)
         self.assertIsInstance(backend_serializer_class_mock.call_args[0][1], S3BackendHandler)
         self.assertIsInstance(backend_serializer_class_mock.call_args[0][2], FileInfo)
         backend_serializer_class_mock.return_value.create_backend_override_file.assert_called_once()

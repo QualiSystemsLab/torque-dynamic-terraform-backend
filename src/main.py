@@ -9,14 +9,12 @@
 import json
 import os
 import sys
-
 from typing import List
 
+import consts
 from backend.backend_handler_provider_factory import BackendHandlerProviderFactory
 from backend.backend_serializer import BackendSerializer
-import consts
 from models.file_info import FileInfo
-from models.terraform_data_source import TerraformRemoteStateDataSource
 from parsers.hcl_parser import Hcl2Parser
 from utils.file_helpers import FilesHelper
 from utils.logger import LoggerHelper
@@ -33,12 +31,14 @@ def torqify_terraform_backend_data_source(sandbox_id: str, all_tf_files: List[Fi
     remote_state_data_sources = []
     for tf_file in all_tf_files:
         data_sources = Hcl2Parser.get_tf_all_remote_state_data_sources(tf_file.file_path)
+        if not data_sources:
+            continue
         data_sources_to_exclude = list(filter(lambda x: x.data_source_name in exclude_data_source_names, data_sources))
         if data_sources_to_exclude:
             data_source_names_to_exclude = list(map(lambda x: x.data_source_name, data_sources_to_exclude))
             LoggerHelper.write_info(f"Excluding remote backend data sources {','.join(data_source_names_to_exclude)} "
                                     f"in TF file {tf_file.file_path}")
-        data_source_to_torqify = set(data_sources) - set(data_sources_to_exclude)
+        data_source_to_torqify = list(filter(lambda x: x.data_source_name not in exclude_data_source_names, data_sources))
         remote_state_data_sources.extend(list(data_source_to_torqify))
 
     if not remote_state_data_sources:

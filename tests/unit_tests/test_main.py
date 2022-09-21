@@ -4,7 +4,7 @@ from unittest.mock import Mock, patch, ANY
 
 import consts
 from backend.handlers.s3_handler import S3BackendHandler
-from main import torqify_terraform_backend, main
+from main import torqify_terraform_remote_backend, main
 from models.file_info import FileInfo
 
 
@@ -25,7 +25,7 @@ class TestMain(TestCase):
                                           "..", "test_data", "tf_s3_backend")
 
         # act
-        torqify_terraform_backend(sandbox_id)
+        torqify_terraform_remote_backend(sandbox_id)
 
         # assert
         update_backend_config = {'s3': {'bucket': 'my-bucket',
@@ -34,7 +34,7 @@ class TestMain(TestCase):
         backend_serializer_class_mock.assert_called_once_with(update_backend_config, ANY, ANY, sandbox_id)
         self.assertIsInstance(backend_serializer_class_mock.call_args[0][1], S3BackendHandler)
         self.assertIsInstance(backend_serializer_class_mock.call_args[0][2], FileInfo)
-        backend_serializer_class_mock.return_value.create_backend_override_file.assert_called_once()
+        backend_serializer_class_mock.return_value.create_backend_config_override_file.assert_called_once()
 
     def test_torqify_terraform_backend_main_tf_dir_not_found(self):
         # arrange
@@ -42,7 +42,7 @@ class TestMain(TestCase):
 
         # act
         with self.assertRaisesRegex(ValueError, "does not exist"):
-            torqify_terraform_backend(Mock())
+            torqify_terraform_remote_backend(Mock())
 
     @patch("main.BackendSerializer")
     def test_torqify_terraform_backend_with_no_backend(self, backend_serializer_class_mock):
@@ -51,7 +51,7 @@ class TestMain(TestCase):
                                           "..", "test_data", "tf_no_backend")
 
         # act
-        torqify_terraform_backend(sandbox_id)
+        torqify_terraform_remote_backend(sandbox_id)
 
         # assert
         backend_serializer_class_mock.assert_not_called()
@@ -64,7 +64,7 @@ class TestMain(TestCase):
 
         # act
         with self.assertRaisesRegex(ValueError, "Handler not found for backend"):
-            torqify_terraform_backend(sandbox_id)
+            torqify_terraform_remote_backend(sandbox_id)
 
     @patch("main.torqify_terraform_backend")
     def test_main_entrypoint_with_sandbox_id_arg(self, torqify_terraform_backend_mock):

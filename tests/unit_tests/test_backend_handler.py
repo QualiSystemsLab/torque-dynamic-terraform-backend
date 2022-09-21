@@ -15,7 +15,7 @@ class TestBackendHandler(TestCase):
         sandbox_id = Mock()
 
         # act
-        result = handler.add_uid_to_tfstate(backend_config, str(sandbox_id))
+        result = handler.add_uid_to_tfstate_for_backend_config(backend_config, str(sandbox_id))
 
         # check original backend config wasn't changed
         self.assertEqual(backend_config,
@@ -32,7 +32,7 @@ class TestBackendHandler(TestCase):
 
         # act
         with self.assertRaisesRegex(ValueError, "property wasn't found in .* backend configurations"):
-            handler.add_uid_to_tfstate(backend_config, str(sandbox_id))
+            handler.add_uid_to_tfstate_for_backend_config(backend_config, str(sandbox_id))
 
     def test_azurerm_backend_handler_add_uid_to_tfstate(self):
         # arrange
@@ -42,7 +42,7 @@ class TestBackendHandler(TestCase):
         sandbox_id = Mock()
 
         # act
-        result = handler.add_uid_to_tfstate(backend_config, str(sandbox_id))
+        result = handler.add_uid_to_tfstate_for_backend_config(backend_config, str(sandbox_id))
 
         # assert
         # check original backend config wasn't changed
@@ -60,7 +60,7 @@ class TestBackendHandler(TestCase):
 
         # act
         with self.assertRaisesRegex(ValueError, "property wasn't found in .* backend configurations"):
-            handler.add_uid_to_tfstate(backend_config, str(sandbox_id))
+            handler.add_uid_to_tfstate_for_backend_config(backend_config, str(sandbox_id))
 
     def test_gcs_backend_handler_add_uid_to_tfstate(self):
         # arrange
@@ -69,7 +69,7 @@ class TestBackendHandler(TestCase):
         sandbox_id = Mock()
 
         # act
-        result = handler.add_uid_to_tfstate(backend_config, str(sandbox_id))
+        result = handler.add_uid_to_tfstate_for_backend_config(backend_config, str(sandbox_id))
 
         # assert
         # check original backend config wasn't changed
@@ -85,7 +85,7 @@ class TestBackendHandler(TestCase):
 
         # act
         with self.assertRaisesRegex(ValueError, "property wasn't found in .* backend configurations"):
-            handler.add_uid_to_tfstate(backend_config, str(sandbox_id))
+            handler.add_uid_to_tfstate_for_backend_config(backend_config, str(sandbox_id))
 
     def test_s3_backend_handeler_format_backend_to_hcl(self):
         # arrange

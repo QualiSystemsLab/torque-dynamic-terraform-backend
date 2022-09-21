@@ -14,5 +14,10 @@ class BackendHandlerProvider:
         for handler in self._handlers:
             if handler.can_handle(backend_config):
                 return handler
+        return None
 
+    def get_handler_by_type(self, backend_type: str) -> BaseBackendHandler:
+        for handler in self._handlers:
+            if handler.can_handle(backend_type=backend_type):
+                return handler
         return None

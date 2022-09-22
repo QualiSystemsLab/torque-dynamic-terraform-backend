@@ -5,7 +5,7 @@
 # - to add support for additional backends implement abstract class BaseBackendHandler and register new handler in
 #   BackendHandlerProviderFactory
 #
-
+import argparse
 import json
 import os
 import sys
@@ -14,6 +14,7 @@ from typing import List
 import consts
 from backend.backend_handler_provider_factory import BackendHandlerProviderFactory
 from backend.backend_serializer import BackendSerializer
+from models.config import ExecConfig
 from models.file_info import FileInfo
 from parsers.hcl_parser import Hcl2Parser
 from utils.file_helpers import FilesHelper
@@ -73,24 +74,33 @@ def torqify_terraform_remote_backend(sandbox_id: str, all_tf_files: List[FileInf
     LoggerHelper.write_info("Successfully finish creating override file for backend files\n")
 
 
+def parse_args() -> ExecConfig:
+    config = ExecConfig()
+    parser = argparse.ArgumentParser(description="Automatically add sandbox id to terraform remote backend",)
+    parser.add_argument("sandbox_id", help="The Torque sandbox ID. This value will be used for uniqueness.")
+    parser.add_argument('-d', '--data', action='store_true',
+                        help="If this flag is provided, will also add sandbox id to all remote_state data sources."
+                             "To exclude certain remote_state data sources use the '-e' option.")
+    parser.add_argument('-e', '--exclude', type=str, action="extend", nargs='*',
+                        help="Use this flag to provide a list of names of remote_state data sources to exclude from "
+                             "adding the sandbox id automatically. If this flag is provided without also specifying "
+                             "the '-d'/'--data' flag then it will be ignored.")
+    return parser.parse_args(namespace=config)
+
+
 def main():
     validate_tf_main_dir_exists()
 
-    # todo - handle case when argv[1] is not provided
-    sandbox_id = sys.argv[1]
-    # todo - get from argv
-    torqify_data_terraform_remote_state = True
-    # list of data source names from type terraform_remote_state to omit when torqifing. if empty will torqify all.
-    omit_torqify_data_source_name = ["network"]
+    args = parse_args()
 
     LoggerHelper.init_logging(consts.LOG_PATH)
     try:
         LoggerHelper.write_info(f"Searching for all .tf files in directory {consts.TF_MAIN_DIR}")
         all_tf_files = FilesHelper.get_all_files(consts.TF_MAIN_DIR, ".tf")
-        torqify_terraform_remote_backend(sandbox_id, all_tf_files)
+        torqify_terraform_remote_backend(args.sandbox_id, all_tf_files)
 
-        if torqify_data_terraform_remote_state:
-            torqify_terraform_backend_data_source(sandbox_id, all_tf_files, omit_torqify_data_source_name)
+        if args.data:
+            torqify_terraform_backend_data_source(args.sandbox_id, all_tf_files, args.exclude)
 
     except Exception as exc:
         # log exception and re-raise original exception

@@ -71,8 +71,8 @@ class TestMain(TestCase):
         # arrange
         sandbox_id = str(Mock())
         testargs = ["prog", sandbox_id]
-        # consts.TF_MAIN_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-        #                                   "..", "test_data", "tf_s3_backend")
+        consts.TF_MAIN_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                          "..", "test_data", "tf_s3_backend")
 
         # act
         with patch("sys.argv", testargs):

@@ -8,7 +8,6 @@
 import argparse
 import json
 import os
-import sys
 from typing import List
 
 import consts
@@ -28,7 +27,7 @@ def validate_tf_main_dir_exists() -> None:
 
 def torqify_terraform_backend_data_source(sandbox_id: str, all_tf_files: List[FileInfo],
                                           exclude_data_source_names: List[str]):
-    LoggerHelper.write_info(f"Searching for remote backend data sources")
+    LoggerHelper.write_info("Searching for remote backend data sources")
     remote_state_data_sources = []
     for tf_file in all_tf_files:
         data_sources = Hcl2Parser.get_tf_all_remote_state_data_sources(tf_file.file_path)
@@ -53,7 +52,7 @@ def torqify_terraform_backend_data_source(sandbox_id: str, all_tf_files: List[Fi
 
 
 def torqify_terraform_remote_backend(sandbox_id: str, all_tf_files: List[FileInfo]):
-    LoggerHelper.write_info(f"Searching for backend configurations")
+    LoggerHelper.write_info("Searching for backend configurations")
     backend_config = {}
     # backend configuration can appear only one time so we are searching for the first occurrence
     for tf_file in all_tf_files:

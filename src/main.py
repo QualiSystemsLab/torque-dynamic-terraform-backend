@@ -1,7 +1,7 @@
 #######################################
 # Notes:
 # - supports Terraform 0.12.0 and above
-# - supported backend types: S3 Bucket(s3), Azure Storage (azurerm), Goggle Cloud Storage (gcs), Artifactory
+# - supported backend types: S3 Bucket(s3), Azure Storage (azurerm), Goggle Cloud Storage (gcs)
 # - to add support for additional backends implement abstract class BaseBackendHandler and register new handler in
 #   BackendHandlerProviderFactory
 #

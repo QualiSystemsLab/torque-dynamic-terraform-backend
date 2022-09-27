@@ -78,7 +78,7 @@ class BaseBackendHandler(ABC):
 
     def format_backend_to_hcl(self, backend_config: dict) -> str:
         if self.backend_type not in backend_config:
-            raise ValueError(f"Expected backend type '{self.backend_type}' but different received different backend "
+            raise ValueError(f"Expected backend type '{self.backend_type}' but received different backend "
                              f"type '{json.dumps(backend_config)}'")
         backend_props = backend_config[self.backend_type]
         if not isinstance(backend_props, dict):

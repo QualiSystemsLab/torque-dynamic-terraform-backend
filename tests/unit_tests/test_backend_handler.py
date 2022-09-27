@@ -4,6 +4,7 @@ from unittest.mock import Mock
 from backend.handlers.azurerm_handler import AzureRMBackendHandler
 from backend.handlers.gcs_handler import GCSBackendHandler
 from backend.handlers.s3_handler import S3BackendHandler
+from models.terraform_data_source import TerraformRemoteStateDataSource
 
 
 class TestBackendHandler(TestCase):
@@ -144,3 +145,74 @@ class TestBackendHandler(TestCase):
 }
 """
         self.assertEqual(expected_result, result)
+
+    def test_format_backend_to_hcl_raises_wrong_backend_type(self):
+        # arrange
+        handler = S3BackendHandler()
+        backend_config = {'gcs': {'bucket': 'my-bucket', 'prefix': 'terraform/state'}}
+
+        # act & assert
+        with self.assertRaisesRegex(ValueError, "Expected backend type"):
+            handler.format_backend_to_hcl(backend_config)
+
+    def test_format_backend_to_hcl_raises_wrong_tf_code(self):
+        # arrange
+        handler = GCSBackendHandler()
+        backend_config = {'gcs': [{'bucket': 'my-bucket', 'prefix': 'terraform/state'}]}
+
+        # act & assert
+        with self.assertRaisesRegex(ValueError, "Expected map"):
+            handler.format_backend_to_hcl(backend_config)
+
+    def test_s3_format_remote_state_data_source_with_uid(self):
+        # arrange
+        handler = S3BackendHandler()
+        sandbox_id = Mock()
+        tf_remote_state = Mock(config={'bucket': 'torque-terraform-backend-network',
+                                       'key': 'network/terraform.tfstate',
+                                       'region': 'us-east-1'})
+        expected_result = """data "terraform_remote_state" "{DATA_SOURCE_NAME}" {{
+\tbackend = "{BACKEND_TYPE}"
+\tconfig = {{
+\t\t{PROP_KEY} = \"{PROP_VALUE}\"
+\t}}
+}}""".format(DATA_SOURCE_NAME=tf_remote_state.data_source_name,
+             BACKEND_TYPE=tf_remote_state.backend_type,
+             PROP_KEY="key",
+             PROP_VALUE="network/terraform-" + str(sandbox_id) + ".tfstate")
+
+        # act
+        result = handler.format_remote_state_data_source_with_uid(tf_remote_state, sandbox_id)
+
+        # assert
+        self.assertEqual(result, expected_result)
+
+    def test_can_handle_by_type(self):
+        # arrange
+        handler = S3BackendHandler()
+
+        # act
+        result = handler.can_handle(backend_type="s3")
+
+        # assert
+        self.assertTrue(result)
+
+    def test_can_handle_by_backend_config(self):
+        # arrange
+        handler = S3BackendHandler()
+
+        # act
+        result = handler.can_handle({"s3": Mock()})
+
+        # assert
+        self.assertTrue(result)
+
+    def test_can_handle_false(self):
+        # arrange
+        handler = S3BackendHandler()
+
+        # act
+        result = handler.can_handle({"gcs": Mock()})
+
+        # assert
+        self.assertFalse(result)

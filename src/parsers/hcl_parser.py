@@ -31,8 +31,9 @@ class Hcl2Parser:
     def get_tf_remote_state_data_source_safely(datasource_object: dict) -> Union[TerraformRemoteStateDataSource, None]:
         if "terraform_remote_state" not in datasource_object:
             return None
-
         terraform_remote_state_dict = datasource_object["terraform_remote_state"]
+        if not isinstance(terraform_remote_state_dict, dict):
+            return None
         keys = list(datasource_object["terraform_remote_state"].keys())
         if len(keys) != 1:
             LoggerHelper.write_info(f"Skipping data source. Expected 1 data source name but got {len(keys)}. "

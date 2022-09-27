@@ -78,3 +78,39 @@ class TestHclParser(TestCase):
         # assert
         self.assertIsInstance(results, List)
         self.assertFalse(results)
+
+    def test_get_tf_remote_state_data_source_safely_not_raises(self):
+        # empty data source object
+        datasource_object = {}
+        result = Hcl2Parser.get_tf_remote_state_data_source_safely(datasource_object)
+        self.assertIsNone(result)
+
+        # wrong type for 'terraform_remote_state' value
+        datasource_object = {"terraform_remote_state": "mock"}
+        result = Hcl2Parser.get_tf_remote_state_data_source_safely(datasource_object)
+        self.assertIsNone(result)
+
+        # multiple values in terraform_remote_state prop
+        datasource_object = {"terraform_remote_state": {"a": "b", "c": "d"}}
+        result = Hcl2Parser.get_tf_remote_state_data_source_safely(datasource_object)
+        self.assertIsNone(result)
+
+        # terraform_remote_state data source name has wrong type
+        datasource_object = {"terraform_remote_state": {"some_name": "mock"}}
+        result = Hcl2Parser.get_tf_remote_state_data_source_safely(datasource_object)
+        self.assertIsNone(result)
+
+        # terraform_remote_state data source missing 'backend'
+        datasource_object = {"terraform_remote_state": {"some_name": {"config": ""}}}
+        result = Hcl2Parser.get_tf_remote_state_data_source_safely(datasource_object)
+        self.assertIsNone(result)
+
+        # terraform_remote_state data source missing 'config'
+        datasource_object = {"terraform_remote_state": {"some_name": {"backend": ""}}}
+        result = Hcl2Parser.get_tf_remote_state_data_source_safely(datasource_object)
+        self.assertIsNone(result)
+
+        # terraform_remote_state data source is correct
+        datasource_object = {"terraform_remote_state": {"some_name": {"backend": "", "config": ""}}}
+        result = Hcl2Parser.get_tf_remote_state_data_source_safely(datasource_object)
+        self.assertIsInstance(result, TerraformRemoteStateDataSource)

@@ -39,10 +39,11 @@ def torqify_terraform_backend_data_source(sandbox_id: str, all_tf_files: List[Fi
             LoggerHelper.write_info(f"Excluding remote backend data sources {','.join(data_source_names_to_exclude)} "
                                     f"in TF file {tf_file.file_path}")
         data_source_to_torqify = list(filter(lambda x: x.data_source_name not in exclude_data_source_names, data_sources))
-        remote_state_data_sources.extend(list(data_source_to_torqify))
+        remote_state_data_sources.extend(data_source_to_torqify)
 
     if not remote_state_data_sources:
         LoggerHelper.write_info("No remote backend data sources found")
+        return
 
     backend_handler_provider = BackendHandlerProviderFactory().create()
     backend_serializer = BackendSerializer(backend_handler_provider, consts.TF_MAIN_DIR, sandbox_id)

@@ -1,3 +1,4 @@
+import json
 from typing import List
 
 from backend.handlers.base import BaseBackendHandler
@@ -14,5 +15,10 @@ class BackendHandlerProvider:
         for handler in self._handlers:
             if handler.can_handle(backend_config):
                 return handler
+        raise ValueError(f"Handler not found for backend: {json.dumps(backend_config)}")
 
-        return None
+    def get_handler_by_type(self, backend_type: str) -> BaseBackendHandler:
+        for handler in self._handlers:
+            if handler.can_handle(backend_type=backend_type):
+                return handler
+        raise ValueError(f"Handler not found for backend: {backend_type}")

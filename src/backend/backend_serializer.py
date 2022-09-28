@@ -31,12 +31,12 @@ class BackendSerializer:
         LoggerHelper.write_info(f"Override file was created for backend located in file {override_file_path}")
 
     def create_backend_remote_state_datasource_override_file(self,
-                                                             backend_remote_state_list:
-                                                             List[TerraformRemoteStateDataSource]):
+                                                             backend_remote_state_list: List[
+                                                                 TerraformRemoteStateDataSource]):
         override_file_path = self._get_remote_state_data_source_override_file_path()
         with (open(override_file_path, 'w')) as override_tf_file:
             for tf_remote_state in backend_remote_state_list:
                 backend_handler = self._backend_handler_provider.get_handler_by_type(tf_remote_state.backend_type)
-                remote_state_data_source_hcl_string =\
+                remote_state_data_source_hcl_string = \
                     backend_handler.format_remote_state_data_source_with_uid(tf_remote_state, self._sandbox_id)
                 override_tf_file.write(remote_state_data_source_hcl_string)

@@ -95,4 +95,4 @@ The following remote backends are currently supported:
 
 
 ## License
-[Apache License 2.0](https://github.com/QualiSystems/torque-dynamic-terraform-backend/blob/master/LICENSE)
+[Apache License 2.0](https://github.com/QualiSystemsLab/torque-dynamic-terraform-backend/blob/master/LICENSE)

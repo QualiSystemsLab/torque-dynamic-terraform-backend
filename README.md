@@ -70,7 +70,7 @@ grains:
 ```
 
 ## CLI Interface
-```cmd
+```
 usage: torqify_tf_backend [-h] [-d] [-e [EXCLUDE [EXCLUDE ...]]] sandbox_id
 
 Automatically add sandbox id to terraform remote backend

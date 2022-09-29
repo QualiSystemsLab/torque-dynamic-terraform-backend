@@ -23,13 +23,26 @@ has a unique state file.
 
 ## Installing
 
-TBD
+1. Download "torqify_tf_backend.X.Y.Z.sh" file from the latest release. 
+2. Commit this script to a Torque Asset repo that is connected to your Torque space.
+3. For any TF grain yaml that you want to "torqify" it's backend configurations, add a "pre-tf-init" script section 
+that references the "torqify_tf_backend.X.Y.Z.sh" script. Example:
+```yaml
+pre-tf-init:
+  source:
+    store: <repo name in Torque>
+    path : <path in repository>/torqify_tf_backend.x.y.z.sh
+  arguments: '{{ sandboxid | downcase }}'
+```
+Note: "torqify_tf_backend.X.Y.Z.sh" is a simple bootstrap script. It will install some dependencies on the Torque agent,
+next it will download the main python package and run it (that's where the magic happens). All the arguments that were 
+provided to this runner script will be forwarded as is to the main python file.
 
 ## Basic Usage
 
 The following shows an example of how to use this solution with a Torque Terraform grain. Look at the "pre-tf-init" section for usage example. 
 
-Replace all placeholders "<...>" with real values. For more information about Torque yaml syntax refer to [Troque docs](https://docs.qtorque.io/blueprint-designer-guide/blueprints).
+Replace all placeholders "<...>" with real values. For more information about Torque yaml syntax refer to [Torque docs](https://docs.qtorque.io/blueprint-designer-guide/blueprints).
 
 ```yaml
 grains:
@@ -56,12 +69,30 @@ grains:
       - output2    
 ```
 
+## CLI Interface
+```cmd
+usage: torqify_tf_backend [-h] [-d] [-e [EXCLUDE [EXCLUDE ...]]] sandbox_id
+
+Automatically add sandbox id to terraform remote backend
+
+positional arguments:
+  sandbox_id            The Torque sandbox ID. This value will be used for uniqueness.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -d, --data            If this flag is provided, will also add sandbox id to all remote_state data sources.To exclude certain remote_state data sources use the '-e' option.
+  -e [EXCLUDE [EXCLUDE ...]], --exclude [EXCLUDE [EXCLUDE ...]]
+                        Use this flag to provide a list of names of remote_state data sources to exclude from adding the sandbox id automatically. If this flag is provided without also
+                        specifying the '-d'/'--data' flag then it will be ignored.
+```
+
 ## Supported remote backends
 
 The following remote backends are currently supported:
 * [s3](https://www.terraform.io/language/settings/backends/s3)
 * [gcs](https://www.terraform.io/language/settings/backends/gcs)
 * [azurerm](https://www.terraform.io/language/settings/backends/azurerm)
+
 
 ## License
 [Apache License 2.0](https://github.com/QualiSystems/torque-dynamic-terraform-backend/blob/master/LICENSE)
